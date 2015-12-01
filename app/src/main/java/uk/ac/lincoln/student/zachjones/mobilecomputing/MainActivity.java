@@ -95,14 +95,14 @@ public class MainActivity extends Activity
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         String date = df.format(c.getTime());
 
-        file = "CATappULT_" + date + ".jpg";
+        file = "CATappULT_" + date + ".jpeg";
 
         return file;
     }
 
     public void openImageGallery(View view)
     {
-        Intent gallery = new Intent(this, GalleryActivity.class); //CAUSES ERROR, WHYYY????!!!!
+        Intent gallery = new Intent(this, GalleryActivity.class);
 
         startActivity(gallery);
     }
