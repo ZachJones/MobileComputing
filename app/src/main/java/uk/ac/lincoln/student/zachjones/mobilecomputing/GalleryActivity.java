@@ -7,9 +7,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -22,13 +26,31 @@ public class GalleryActivity extends Activity
     private ArrayList<File> imageFile = new ArrayList<File>();
     private GridView gallery;
 
+    private static final String TAG = GalleryActivity.class.getSimpleName();
+    private GridView mGridView;
+    private ProgressBar mProgressBar;
+    private GridViewAdapter mGridAdapter;
+    private ArrayList<GridItem> mGridData;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
 
-        gallery = (GridView) findViewById(R.id.imageGrid);
+        mGridView = (GridView) findViewById(R.id.imageGrid);
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+
+        //Initialize with empty data
+        mGridData = new ArrayList<>();
+        mGridAdapter = new GridViewAdapter(this, R.layout.grid_item_layout, mGridData);
+        mGridView.setAdapter(mGridAdapter);
+
+        //Start download
+
+        mProgressBar.setVisibility(View.VISIBLE);
+
+        //gallery = (GridView) findViewById(R.id.imageGrid);
 
         getSavedImages();
     }
@@ -54,12 +76,14 @@ public class GalleryActivity extends Activity
     private void setupImageGrid(ArrayList<File> imageFile)
     {
         String fileName;
-        File current;
+        File current = null;
         String fileStart;
         Bitmap bitmap;
+        GridItem image;
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         ArrayAdapter<Bitmap> images = new ArrayAdapter<Bitmap>(GalleryActivity.this, android.R.layout.simple_gallery_item);
+
 
         FileInputStream fis = null;
         BufferedInputStream bis = null;
@@ -88,9 +112,16 @@ public class GalleryActivity extends Activity
                     fis = new FileInputStream(current); //Throws exception, need directories?
                     bis = new BufferedInputStream(fis);
                     bitmap = BitmapFactory.decodeStream(bis);
+
                     //Bitmap useThisBitmap = Bitmap.createScaledBitmap(bitmap, parent.getWidth(), parent.getHeight(), true);
 
                     images.add(bitmap);
+
+                    image = new GridItem();
+
+                    image.setImage(current);
+
+                    mGridData.add(image);
                 }
             }
             catch (Exception e)
@@ -99,7 +130,10 @@ public class GalleryActivity extends Activity
             }
         }
 
-        gallery.setAdapter(images); //App breaks just before here. Why??
+        //gallery.setAdapter(images);
+
+        mGridAdapter.setGridData(mGridData);
+        mProgressBar.setVisibility(View.GONE);
     }
 
     public ArrayList<File> getfile(File dir)

@@ -130,27 +130,17 @@ public class MainActivity extends Activity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent image)
     {
-        //if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK)
-       // {
-        //    Bitmap thumbnail = data.getParcelableExtra("data");
-        //}
-
-
         super.onActivityResult(requestCode, resultCode, image);
 
         if(resultCode == RESULT_OK)
         {
-            Uri selectedImage = image.getData();
             ImageView photo = (ImageView) findViewById(R.id.imageView);
             Bitmap mBitmap = null;
-            try
-            {
-                mBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+
+            Bundle extras = image.getExtras();
+            mBitmap = (Bitmap) extras.get("data");
+            photo.setImageBitmap(mBitmap);
+
         }
     }
 
