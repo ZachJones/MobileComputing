@@ -111,16 +111,6 @@ public class MainActivity extends Activity
         startActivity(gallery);
     }
 
-    /** Called when the user touches the button */
-    public void getLocation(View view)
-    {
-        // create an intent to start the activity called TestActivity
-        Intent location = new Intent(this, LocationActivity.class);
-
-        // start TestActivity!
-        startActivity(location);
-    }
-
     public void openCamera(View view)
     {
         bitmap = null;

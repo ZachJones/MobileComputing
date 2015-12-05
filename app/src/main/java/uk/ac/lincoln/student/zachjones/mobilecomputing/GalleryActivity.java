@@ -55,12 +55,6 @@ public class GalleryActivity extends Activity
         mGridAdapter = new GridViewAdapter(this, R.layout.grid_item_layout, mGridData);
         mGridView.setAdapter(mGridAdapter);
 
-        //Set the gallery activity back to default
-        //mLargeImage.setVisibility(View.INVISIBLE);
-        //mDeleteButton.setVisibility(View.INVISIBLE);
-        //mReturnButton.setVisibility(View.INVISIBLE);
-        //mGridView.setVisibility(View.VISIBLE);
-
         //Set up the onClickListener for each GridView item
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id)
@@ -102,8 +96,6 @@ public class GalleryActivity extends Activity
         {
             try
             {
-                //File deletedFile = new File(selectedImage.toString());
-                //boolean deleted = deletedFile.delete();
                 selectedImage.delete();
             }
             catch (Exception e)
