@@ -46,6 +46,8 @@ public class MainActivity extends Activity
 
     public void newCatImage(View view)
     {
+        bitmap = null;
+
         // start the  AsyncTask for calling the REST service using httpConnect class
         AsyncTaskParseXml task = new AsyncTaskParseXml();
         task.execute();
@@ -102,6 +104,8 @@ public class MainActivity extends Activity
 
     public void openImageGallery(View view)
     {
+        bitmap = null;
+
         Intent gallery = new Intent(this, GalleryActivity.class);
 
         startActivity(gallery);
@@ -119,6 +123,8 @@ public class MainActivity extends Activity
 
     public void openCamera(View view)
     {
+        bitmap = null;
+
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         if (cameraIntent.resolveActivity(getPackageManager()) != null)

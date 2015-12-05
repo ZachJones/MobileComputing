@@ -4,7 +4,8 @@ import android.graphics.Bitmap;
 
 import java.io.File;
 
-public class GridItem {
+public class GridItem
+{
     private File imageLocation;
 
     public GridItem() {

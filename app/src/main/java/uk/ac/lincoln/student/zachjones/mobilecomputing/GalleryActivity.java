@@ -1,6 +1,8 @@
 package uk.ac.lincoln.student.zachjones.mobilecomputing;
 
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -8,8 +10,11 @@ import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -24,13 +29,14 @@ public class GalleryActivity extends Activity
 {
     private File pictureFolder;
     private ArrayList<File> imageFile = new ArrayList<File>();
-    private GridView gallery;
-
-    private static final String TAG = GalleryActivity.class.getSimpleName();
+    private ImageView mLargeImage;
+    private Button mDeleteButton;
+    private Button mReturnButton;
     private GridView mGridView;
     private ProgressBar mProgressBar;
     private GridViewAdapter mGridAdapter;
     private ArrayList<GridItem> mGridData;
+    private File selectedImage = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -40,19 +46,80 @@ public class GalleryActivity extends Activity
 
         mGridView = (GridView) findViewById(R.id.imageGrid);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        mLargeImage = (ImageView) findViewById(R.id.largeImage);
+        mDeleteButton = (Button) findViewById(R.id.deleteButton);
+        mReturnButton = (Button) findViewById(R.id.returnButton);
 
         //Initialize with empty data
         mGridData = new ArrayList<>();
         mGridAdapter = new GridViewAdapter(this, R.layout.grid_item_layout, mGridData);
         mGridView.setAdapter(mGridAdapter);
 
-        //Start download
+        //Set the gallery activity back to default
+        //mLargeImage.setVisibility(View.INVISIBLE);
+        //mDeleteButton.setVisibility(View.INVISIBLE);
+        //mReturnButton.setVisibility(View.INVISIBLE);
+        //mGridView.setVisibility(View.VISIBLE);
+
+        //Set up the onClickListener for each GridView item
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id)
+            {
+                GridItem item = (GridItem) parent.getItemAtPosition(position);
+
+                FileInputStream fis = null;
+                BufferedInputStream bis = null;
+                selectedImage = item.getImage();
+
+                try
+                {
+                    fis = new FileInputStream(selectedImage);
+                    bis = new BufferedInputStream(fis);
+                    Bitmap bitmap = BitmapFactory.decodeStream(bis);
+
+                    mLargeImage.setImageBitmap(bitmap);
+                }
+                catch (Exception e)
+                {
+                    //Toast.makeText(this, "Error loading image", Toast.LENGTH_SHORT).show();
+                }
+
+                mGridView.setVisibility(View.INVISIBLE);
+                mLargeImage.setVisibility(View.VISIBLE);
+                mDeleteButton.setVisibility(View.VISIBLE);
+                mReturnButton.setVisibility(View.VISIBLE);
+            }
+        });
 
         mProgressBar.setVisibility(View.VISIBLE);
 
-        //gallery = (GridView) findViewById(R.id.imageGrid);
-
         getSavedImages();
+    }
+
+    public void deleteImage(View view)
+    {
+        if(mLargeImage != null)
+        {
+            try
+            {
+                //File deletedFile = new File(selectedImage.toString());
+                //boolean deleted = deletedFile.delete();
+                selectedImage.delete();
+            }
+            catch (Exception e)
+            {
+                Toast.makeText(this, "No image found", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        showGallery(view);
+    }
+
+    public void showGallery(View view)
+    {
+        //Return to main activity
+        Intent intent = new Intent(GalleryActivity.this, MainActivity.class);
+        startActivity(intent);
     }
 
     private void getSavedImages()
@@ -109,7 +176,7 @@ public class GalleryActivity extends Activity
                 {
                     //bitmap = BitmapFactory.decodeFile(fileName, options); //bitmap == null!!!!
 
-                    fis = new FileInputStream(current); //Throws exception, need directories?
+                    fis = new FileInputStream(current);
                     bis = new BufferedInputStream(fis);
                     bitmap = BitmapFactory.decodeStream(bis);
 
@@ -161,7 +228,6 @@ public class GalleryActivity extends Activity
         }
         return imageFile;
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
