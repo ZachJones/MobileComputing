@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="android:Theme.Material.Light">
+    <color name="main_colour_500">#009688</color>
+    <color name="secondary_colour_700">#00796B</color>
+    <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
+        <item name="android:navigationBarColor">@color/main_colour_500</item>
+        <item name="android:statusBarColor">@color/secondary_colour_700</item>
+
+        <item name="android:actionBarStyle">@style/AppTheme.ActionBar</item>
+    </style>
+
+    <style name="AppTheme.ActionBar" parent="@android:style/Widget.ActionBar">
+        <item name="android:background">#009688</item>
+        <item name="android:logo">@android:color/transparent</item>
     </style>
 </resources>

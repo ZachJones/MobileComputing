@@ -3,49 +3,60 @@
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
+    android:background="#E0F2F1">
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
         android:text="Camera"
         android:id="@+id/cameraButton"
         android:onClick="openCamera"
-        android:layout_above="@+id/imageView"
-        android:layout_alignStart="@+id/saveButton" />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:textColor="#FFFFFF"
+        android:background="#00796B" />
 
     <ImageView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:id="@+id/imageView"
         android:visibility="visible"
-        android:layout_centerVertical="true"
+        android:layout_above="@+id/saveButton"
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
         android:text="GET CAT!"
         android:id="@+id/catButton"
         android:onClick="newCatImage"
         android:visibility="visible"
-        android:layout_below="@+id/imageView"
+        android:textColor="#FFFFFF"
+        android:background="#00796B"
+        android:layout_above="@+id/imageView"
+        android:layout_alignStart="@+id/saveButton"
+        android:singleLine="false" />
+
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:text="Save Cat!"
+        android:id="@+id/saveButton"
+        android:onClick="saveCatImage"
+        android:textColor="#FFFFFF"
+        android:background="#00796B"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Save Cat!"
-        android:id="@+id/saveButton"
-        android:layout_below="@+id/catButton"
-        android:layout_centerHorizontal="true"
-        android:onClick="saveCatImage" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
         android:text="View Saved Cats"
         android:id="@+id/galleryButton"
-        android:layout_centerHorizontal="true"
-        android:onClick="openImageGallery" />
+        android:onClick="openImageGallery"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:textColor="#FFFFFF"
+        android:background="#00796B" />
 </RelativeLayout>

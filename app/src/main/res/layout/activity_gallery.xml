@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f0f0f0">
+    android:background="#E0F2F1">
 
     <GridView
         android:id="@+id/imageGrid"
@@ -30,33 +30,39 @@
     <ImageView
         android:layout_width="300dp"
         android:layout_height="300dp"
-        android:layout_centerHorizontal="true"
         android:maxHeight="300dp"
         android:maxWidth="300dp"
         android:id="@+id/largeImage"
         android:visibility="invisible"
-        android:clickable="true" />
+        android:clickable="true"
+        android:layout_above="@+id/deleteButton"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="125dp"
         android:layout_height="75dp"
-        android:layout_centerHorizontal="true"
         android:id="@+id/deleteButton"
-        android:layout_below="@+id/largeImage"
 
         android:text="DELETE IMAGE"
-        android:background="#ff122f"
+        android:background="#B71C1C"
         android:visibility="invisible"
-        android:onClick="deleteImage" />
+        android:onClick="deleteImage"
+        android:layout_marginBottom="28dp"
+        android:textColor="#FFFFFF"
+        android:layout_above="@+id/returnButton"
+        android:layout_centerHorizontal="true" />
 
     <Button
-        android:layout_width="125dp"
-        android:layout_height="75dp"
-        android:layout_centerHorizontal="true"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
         android:id="@+id/returnButton"
-        android:layout_below="@+id/deleteButton"
-        android:text="Back to gallery"
+        android:text="Return to gallery"
         android:visibility="invisible"
-        android:onClick="showGallery" />
+        android:onClick="showGallery"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="27dp"
+        android:background="#00796B"
+        android:textColor="#FFFFFF" />
 
 </RelativeLayout>

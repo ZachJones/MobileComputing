@@ -16,7 +16,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="CATappULT"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
             android:label="CATappULT" >
@@ -27,14 +27,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LocationActivity"
-            android:label="@string/title_activity_location"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="uk.ac.lincoln.student.zachjones.mobilecomputing.MainActivity" />
-        </activity>
-        <activity
             android:name=".GalleryActivity"
             android:label="@string/title_activity_gallery"
             android:parentActivityName=".MainActivity" >
@@ -42,14 +34,5 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.ac.lincoln.student.zachjones.mobilecomputing.MainActivity" />
         </activity>
-        <activity
-            android:name=".LargeImageActivity"
-            android:label="View Image"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="uk.ac.lincoln.student.zachjones.mobilecomputing.MainActivity" />
-        </activity>
     </application>
-
 </manifest>
