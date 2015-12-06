@@ -74,6 +74,8 @@ public class MainActivity extends Activity
                     out = new FileOutputStream(pictureFile);
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
                     out.close();
+
+                    Toast.makeText(this, "Image saved to SD card", Toast.LENGTH_SHORT).show();
                 }
                 catch (IOException e)
                 {
@@ -85,6 +87,10 @@ public class MainActivity extends Activity
             {
                 Toast.makeText(this, "No external disk mounted", Toast.LENGTH_SHORT).show();
             }
+        }
+        else
+        {
+            Toast.makeText(this, "No image loaded, please take a picture or get a cat", Toast.LENGTH_SHORT).show();
         }
     }
 

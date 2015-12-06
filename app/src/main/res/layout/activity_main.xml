@@ -8,20 +8,11 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Location"
-        android:id="@+id/locationButton"
-        android:onClick="getLocation"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="Camera"
         android:id="@+id/cameraButton"
         android:onClick="openCamera"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_above="@+id/imageView"
+        android:layout_alignStart="@+id/saveButton" />
 
     <ImageView
         android:layout_width="200dp"
@@ -55,7 +46,6 @@
         android:layout_height="wrap_content"
         android:text="View Saved Cats"
         android:id="@+id/galleryButton"
-        android:layout_below="@+id/locationButton"
         android:layout_centerHorizontal="true"
         android:onClick="openImageGallery" />
 </RelativeLayout>

@@ -109,8 +109,8 @@ public class GalleryActivity extends Activity
 
     public void showGallery(View view)
     {
-        //Return to main activity
-        Intent intent = new Intent(GalleryActivity.this, MainActivity.class);
+        //Reload the Gallery activity
+        Intent intent = new Intent(GalleryActivity.this, GalleryActivity.class);
         startActivity(intent);
     }
 
