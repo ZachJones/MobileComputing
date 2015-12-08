@@ -1,20 +1,23 @@
 package uk.ac.lincoln.student.zachjones.mobilecomputing;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.*;
 import android.os.AsyncTask;
+
+import com.androidquery.AQuery;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,7 +40,9 @@ public class MainActivity extends Activity
     static Bitmap bitmap;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
-    //static final Uri mLocationForPhotos;
+
+    //Set up database variables
+    public static SQLiteDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -46,9 +51,21 @@ public class MainActivity extends Activity
         setContentView(R.layout.activity_main);
     }
 
+    private void createTable()
+    {
+        //Define table columns
+        String createXMLTable = "CREATE TABLE IF NOT EXISTS Image_Data (imageID TEXT, imageURL TEXT, sourceURL TEXT);";
+
+        //Create table with columns for each data item
+        database.execSQL(createXMLTable);
+    }
+
     public void newCatImage(View view)
     {
         bitmap = null;
+
+        database = openOrCreateDatabase("xmlData", MODE_PRIVATE, null);
+        createTable();
 
         // start the  AsyncTask for calling the REST service using httpConnect class
         AsyncTaskParseXml task = new AsyncTaskParseXml();
@@ -60,6 +77,7 @@ public class MainActivity extends Activity
         String fileName = getFileName();
         String MEDIA_MOUNTED = "mounted";
         String diskState = Environment.getExternalStorageState();
+        ImageView catImage = (ImageView) findViewById(R.id.imageView);
 
         if(bitmap != null)
         {
@@ -138,13 +156,11 @@ public class MainActivity extends Activity
 
         if(resultCode == RESULT_OK)
         {
-            ImageView photo = (ImageView) findViewById(R.id.imageView);
-            Bitmap mBitmap = null;
+            ImageView catImage = (ImageView) findViewById(R.id.imageView);
 
             Bundle extras = image.getExtras();
-            mBitmap = (Bitmap) extras.get("data");
-            photo.setImageBitmap(mBitmap);
-
+            bitmap = (Bitmap) extras.get("data");
+            catImage.setImageBitmap(bitmap);
         }
     }
 
@@ -181,15 +197,21 @@ public class MainActivity extends Activity
 
         @Override
         // this method is used for......................
-        protected void onPreExecute() {}
+        protected void onPreExecute()
+        {
+        }
 
         @Override
         // this method is used for...................
         protected String doInBackground(String... arg0)
         {
-            try {
-
+            try
+            {
                 String text = null;
+                String imageURL = null;
+                String imageID = null;
+                String sourceURL = null;
+
                 // create new instance of the httpConnect class
                 httpConnect xmlParser = new httpConnect();
 
@@ -222,25 +244,44 @@ public class MainActivity extends Activity
                             break;
 
                         case XmlPullParser.END_TAG:
-                            if(name.equals("url"))
+                            try
                             {
-                                //Parse the image url to the proper URL type
-                                URL url = new URL(text);
+                                if (name.equals("url"))
+                                {
+                                    //Parse the image url to the proper URL type
+                                    URL url = new URL(text);
+                                    imageURL = text;
 
-                                //Download cat image from url and save as a bitmap
-                                InputStream is = url.openConnection().getInputStream();
-                                bitmap = BitmapFactory.decodeStream(is);
+                                    //Download cat image from url and save as a bitmap
+                                    InputStream is = url.openConnection().getInputStream();
+                                    bitmap = BitmapFactory.decodeStream(is);
+                                }
+                                else if(name.equals("id"))
+                                {
+                                    imageID = text;
+                                }
+                                else if(name.equals("source_url"))
+                                {
+                                    sourceURL = text;
+                                }
                             }
-
+                            catch (Exception e)
+                            {
+                                Log.e("Cat API Parsing", "Invalid data from: " + name);
+                            }
                             break;
                     }
                     event = xpp.next();
                 }
+
+                database.execSQL("INSERT INTO Image_Data VALUES (\"" + imageID + "\", \"" + imageURL + "\", \"" + sourceURL + "\");"); //Store XML data into xmlData database
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 e.printStackTrace();
             }
 
+            database.close();
             return null;
         }
 
@@ -248,6 +289,11 @@ public class MainActivity extends Activity
         //The below method will run when service HTTP request is complete
         protected void onPostExecute(String strFromDoInBg)
         {
+            if (xml == null)
+            {
+                Toast.makeText(MainActivity.this, "Error loading images, are you connected to the internet?", Toast.LENGTH_SHORT).show();
+            }
+
             ImageView catImage = (ImageView) findViewById(R.id.imageView);
             catImage.setImageBitmap(bitmap);
         }

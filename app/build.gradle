@@ -23,6 +23,7 @@ dependencies {
 
     compile 'com.google.android.gms:play-services-location:8.3.0' //Google Play location services
     compile "com.squareup.picasso:picasso:2.4.0" //Picasso image handling library
+    compile 'com.googlecode.android-query:android-query:0.24.3' //Android Query library
 
     //compile 'com.google.android.gms:play-services:6.5.87'
     /* This includes all google play dependencies, individual ones can be found here:

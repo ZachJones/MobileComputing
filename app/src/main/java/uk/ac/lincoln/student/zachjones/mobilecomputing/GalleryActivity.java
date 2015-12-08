@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -135,21 +136,15 @@ public class GalleryActivity extends Activity
     private void setupImageGrid(ArrayList<File> imageFile)
     {
         String fileName;
-        File current = null;
+        File current;
         String fileStart;
-        Bitmap bitmap;
         GridItem image;
         BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        options.inJustDecodeBounds = true;
         ArrayAdapter<Bitmap> images = new ArrayAdapter<Bitmap>(GalleryActivity.this, android.R.layout.simple_gallery_item);
-
-
-        FileInputStream fis = null;
-        BufferedInputStream bis = null;
 
         for (int i = 0; i < imageFile.size(); i++)
         {
-            fileName = "";
             fileStart = "";
             current = imageFile.get(i);
             fileName = current.getName();
@@ -166,16 +161,6 @@ public class GalleryActivity extends Activity
             {
                 if (fileStart.equals("CATappULT"))
                 {
-                    //bitmap = BitmapFactory.decodeFile(fileName, options); //bitmap == null!!!!
-
-                    fis = new FileInputStream(current);
-                    bis = new BufferedInputStream(fis);
-                    bitmap = BitmapFactory.decodeStream(bis);
-
-                    //Bitmap useThisBitmap = Bitmap.createScaledBitmap(bitmap, parent.getWidth(), parent.getHeight(), true);
-
-                    images.add(bitmap);
-
                     image = new GridItem();
 
                     image.setImage(current);
@@ -185,11 +170,11 @@ public class GalleryActivity extends Activity
             }
             catch (Exception e)
             {
-                //Toast.makeText(this, "Incorrect filetype", Toast.LENGTH_SHORT);
+                Log.e("Gallery Activity", "Error loading images " + e.toString());
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
             }
         }
-
-        //gallery.setAdapter(images);
 
         mGridAdapter.setGridData(mGridData);
         mProgressBar.setVisibility(View.GONE);

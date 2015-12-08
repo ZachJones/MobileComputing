@@ -7,15 +7,17 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import android.util.Log;
+import android.widget.Toast;
 
 public class httpConnect
 {
-    final String TAG = "JsonParser.java";
+    final String TAG = "XMLParser.java";
     static String xml = "";
 
     public String getXMLFromUrl(String url)
     {
-        try {
+        try
+        {
             // this code block represents/configures a connection to your REST service
             // it also represents an HTTP 'GET' request to get data from the REST service, not POST!
             URL u = new URL(url);

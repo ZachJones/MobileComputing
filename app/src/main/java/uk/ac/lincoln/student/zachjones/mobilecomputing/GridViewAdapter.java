@@ -32,13 +32,15 @@ public class GridViewAdapter extends ArrayAdapter<GridItem>
      * Updates grid data and refresh grid items.
      * @param mGridData
      */
-    public void setGridData(ArrayList<GridItem> mGridData) {
+    public void setGridData(ArrayList<GridItem> mGridData)
+    {
         this.mGridData = mGridData;
         notifyDataSetChanged();
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent)
+    {
         View row = convertView;
         ViewHolder holder;
 
@@ -53,6 +55,8 @@ public class GridViewAdapter extends ArrayAdapter<GridItem>
         }
 
         GridItem item = mGridData.get(position);
+
+
 
         Picasso.with(mContext).load(item.getImage()).into(holder.imageView);
         return row;
