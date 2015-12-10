@@ -1,12 +1,25 @@
+/**
+ * Zach Jones (JON11356270), University of Lincoln
+ *
+ * Mobile Computing (CMP3109M-1516), Assessment 1
+ *
+ * All code used follows Android's "Code Style for Contributors" guidelines:
+ *
+ *          https://source.android.com/source/code-style.html
+ *
+ * Reference:
+ *          http://javatechig.com/android/download-and-display-image-in-android-gridview
+ * */
+
 package uk.ac.lincoln.student.zachjones.mobilecomputing;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,10 +29,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
-
-import com.squareup.picasso.Picasso;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -28,16 +38,14 @@ import java.util.ArrayList;
 
 public class GalleryActivity extends Activity
 {
-    private File pictureFolder;
-    private ArrayList<File> imageFile = new ArrayList<File>();
+    private ArrayList<File> mImageFile = new ArrayList<File>();
     private ImageView mLargeImage;
     private Button mDeleteButton;
     private Button mReturnButton;
     private GridView mGridView;
-    private ProgressBar mProgressBar;
     private GridViewAdapter mGridAdapter;
     private ArrayList<GridItem> mGridData;
-    private File selectedImage = null;
+    private File mSelectedImage = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -46,7 +54,6 @@ public class GalleryActivity extends Activity
         setContentView(R.layout.activity_gallery);
 
         mGridView = (GridView) findViewById(R.id.imageGrid);
-        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         mLargeImage = (ImageView) findViewById(R.id.largeImage);
         mDeleteButton = (Button) findViewById(R.id.deleteButton);
         mReturnButton = (Button) findViewById(R.id.returnButton);
@@ -57,18 +64,19 @@ public class GalleryActivity extends Activity
         mGridView.setAdapter(mGridAdapter);
 
         //Set up the onClickListener for each GridView item
-        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            /** Sets the larger image view's bitmap to the same as the clicked image, then makes it visible */
             public void onItemClick(AdapterView<?> parent, View v, int position, long id)
             {
-                GridItem item = (GridItem) parent.getItemAtPosition(position);
-
-                FileInputStream fis = null;
-                BufferedInputStream bis = null;
-                selectedImage = item.getImage();
+                FileInputStream fis;
+                BufferedInputStream bis;
 
                 try
                 {
-                    fis = new FileInputStream(selectedImage);
+                    GridItem item = (GridItem) parent.getItemAtPosition(position);
+                    mSelectedImage = item.getImage();
+                    fis = new FileInputStream(mSelectedImage);
                     bis = new BufferedInputStream(fis);
                     Bitmap bitmap = BitmapFactory.decodeStream(bis);
 
@@ -76,7 +84,8 @@ public class GalleryActivity extends Activity
                 }
                 catch (Exception e)
                 {
-                    //Toast.makeText(this, "Error loading image", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GalleryActivity.this, "Error loading image",
+                            Toast.LENGTH_SHORT).show();
                 }
 
                 mGridView.setVisibility(View.INVISIBLE);
@@ -86,18 +95,17 @@ public class GalleryActivity extends Activity
             }
         });
 
-        mProgressBar.setVisibility(View.VISIBLE);
-
         getSavedImages();
     }
 
+    /** Deletes the selected image from external storage */
     public void deleteImage(View view)
     {
         if(mLargeImage != null)
         {
             try
             {
-                selectedImage.delete();
+                mSelectedImage.delete();
             }
             catch (Exception e)
             {
@@ -108,13 +116,25 @@ public class GalleryActivity extends Activity
         showGallery(view);
     }
 
+    /** Restarts the activity, in order to update the grid view */
     public void showGallery(View view)
     {
-        //Reload the Gallery activity
-        Intent intent = new Intent(GalleryActivity.this, GalleryActivity.class);
-        startActivity(intent);
+        try
+        {
+            //Reload the Gallery activity
+            Intent reload = new Intent(GalleryActivity.this, GalleryActivity.class);
+            startActivity(reload);
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(this, "Error loading gallery, please try again later",
+                    Toast.LENGTH_SHORT).show();
+            Intent main = new Intent(this, MainActivity.class);
+            startActivity(main);
+        }
     }
 
+    /** Calls other methods to create the image grid */
     private void getSavedImages()
     {
         String MEDIA_MOUNTED = "mounted";
@@ -122,10 +142,11 @@ public class GalleryActivity extends Activity
 
         if(diskState.equals(MEDIA_MOUNTED))
         {
-            File pictureFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-            getfile(pictureFolder);
+            File pictureFolder = Environment.getExternalStoragePublicDirectory
+                    (Environment.DIRECTORY_PICTURES);
+            getFile(pictureFolder);
 
-            setupImageGrid(imageFile);
+            setupImageGrid(mImageFile);
         }
         else
         {
@@ -133,6 +154,8 @@ public class GalleryActivity extends Activity
         }
     }
 
+    /** Creates an image view for each image stored in imageFile and
+     * uses the GridViewAdapter class to put them into a grid */
     private void setupImageGrid(ArrayList<File> imageFile)
     {
         String fileName;
@@ -141,16 +164,12 @@ public class GalleryActivity extends Activity
         GridItem image;
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        ArrayAdapter<Bitmap> images = new ArrayAdapter<Bitmap>(GalleryActivity.this, android.R.layout.simple_gallery_item);
 
         for (int i = 0; i < imageFile.size(); i++)
         {
             fileStart = "";
             current = imageFile.get(i);
             fileName = current.getName();
-
-
-            //NB - Might need to discount the folder names (pictureFolder) before getting fileStart
 
             for (int n = 0; n < 9; n++) //Loop up to 10 as there are 9 letters in CATappULT
             {
@@ -159,6 +178,8 @@ public class GalleryActivity extends Activity
 
             try
             {
+                //Finds all images that were saved using CATappULT on external storage
+                //and creates a corresponding GridItem
                 if (fileStart.equals("CATappULT"))
                 {
                     image = new GridItem();
@@ -171,16 +192,16 @@ public class GalleryActivity extends Activity
             catch (Exception e)
             {
                 Log.e("Gallery Activity", "Error loading images " + e.toString());
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
+                Intent main = new Intent(GalleryActivity.this, MainActivity.class);
+                startActivity(main);
             }
         }
 
         mGridAdapter.setGridData(mGridData);
-        mProgressBar.setVisibility(View.GONE);
     }
 
-    public ArrayList<File> getfile(File dir)
+    /** Retrieves all .jpeg files stored on the SD card and saves them to the mImageFile array */
+    public ArrayList<File> getFile(File dir)
     {
         File listFile[] = dir.listFiles();
         if (listFile != null && listFile.length > 0)
@@ -190,20 +211,20 @@ public class GalleryActivity extends Activity
 
                 if (listFile[i].isDirectory())
                 {
-                    //images.add(listFile[i]);
-                    getfile(listFile[i]);
+                    getFile(listFile[i]);
                 }
                 else
                 {
                     if (listFile[i].getName().endsWith(".jpeg"))
                     {
-                        imageFile.add(listFile[i]);
+                        mImageFile.add(listFile[i]);
                     }
                 }
 
             }
         }
-        return imageFile;
+
+        return mImageFile;
     }
 
     @Override
@@ -211,20 +232,27 @@ public class GalleryActivity extends Activity
     {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_gallery, menu);
+
+        menu.add(menu.NONE, 2, 103, "Info"); //Adds an information option to the menu
+
         return true;
     }
 
     @Override
+    /** Opens the phone's memory settings */
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_settings)
+        {
+            startActivity(new Intent(Settings.ACTION_MEMORY_CARD_SETTINGS));
+
             return true;
+        }
+        else
+        {
+            Toast.makeText(this, "CATappULT version 1.0", Toast.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);
